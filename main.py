@@ -4,6 +4,23 @@ import psycopg2
 import os
 from datetime import datetime
 
+@app.get("/init-db")
+def init_db():
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS messages (
+        id SERIAL PRIMARY KEY,
+        sender VARCHAR(1) NOT NULL,
+        text TEXT NOT NULL,
+        timestamp TIMESTAMP NOT NULL
+    );
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"status": "table created"}
+
 app = FastAPI()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -41,3 +58,4 @@ def get_messages():
         {"sender": r[0], "text": r[1], "timestamp": r[2]}
         for r in rows
     ]
+
