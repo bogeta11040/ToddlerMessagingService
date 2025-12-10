@@ -18,6 +18,7 @@ current_display = ""
 typing_buffer = ""
 is_typing = False
 last_message_timestamp = None
+just_sent = False
 
 # ---- Utility za LCD ----
 def show_on_lcd(text):
@@ -28,6 +29,8 @@ def show_on_lcd(text):
 
 # ---- 1. SLANJE PORUKE ----
 def send_message(text):
+    global just_sent
+    just_sent = True
     requests.post(
         API_URL,
         json={"sender": SENDER, "text": text}
@@ -53,11 +56,14 @@ def fetch_messages():
             timestamp = last["timestamp"]
 
             # prikazuj samo poruke od B
+            global just_sent
+
             if sender == "B":
-                # prikazi novu poruku samo ako je nova
-                if timestamp != last_message_timestamp and not is_typing:
-                    show_on_lcd(text)
-                    last_message_timestamp = timestamp
+    # ako smo tek poslali poruku
+                if just_sent:
+                    time.sleep(1)
+                    just_sent = False
+                    return
 
         except Exception as e:
             # print(e)
@@ -92,6 +98,7 @@ def keyboard_input():
                 show_on_lcd(typing_buffer)
             typing_buffer = ""
             is_typing = False
+            time.sleep(0.5)   # LCD stabilizacija
             continue
 
         elif ch == "\x7f":  # BACKSPACE
@@ -113,5 +120,6 @@ thread_fetcher.start()
 # Glavna petlja ne radi nista
 while True:
     time.sleep(1)
+
 
 
