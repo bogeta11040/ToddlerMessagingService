@@ -6,7 +6,7 @@ import termios
 import tty
 from RPLCD.i2c import CharLCD
 
-API_URL = "https://tvoj-api.onrender.com/messages"
+API_URL = "https://toddlermessagingservice.onrender.com/messages"
 SENDER = "A"
 
 # ---- LCD ----
@@ -113,3 +113,4 @@ thread_fetcher.start()
 # Glavna petlja ne radi nista
 while True:
     time.sleep(1)
+
