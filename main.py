@@ -4,6 +4,17 @@ import psycopg2
 import os
 from datetime import datetime
 
+app = FastAPI()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+def get_conn():
+    return psycopg2.connect(DATABASE_URL, sslmode="require")
+
+class Message(BaseModel):
+    sender: str  # "A" ili "B"
+    text: str
+
 @app.get("/init-db")
 def init_db():
     conn = get_conn()
@@ -20,18 +31,7 @@ def init_db():
     cur.close()
     conn.close()
     return {"status": "table created"}
-
-app = FastAPI()
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-def get_conn():
-    return psycopg2.connect(DATABASE_URL, sslmode="require")
-
-class Message(BaseModel):
-    sender: str  # "A" ili "B"
-    text: str
-
+    
 @app.post("/messages")
 def add_message(msg: Message):
     conn = get_conn()
@@ -58,4 +58,5 @@ def get_messages():
         {"sender": r[0], "text": r[1], "timestamp": r[2]}
         for r in rows
     ]
+
 
