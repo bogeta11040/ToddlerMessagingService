@@ -14,23 +14,6 @@ def get_conn():
 class Message(BaseModel):
     sender: str  # "A" ili "B"
     text: str
-
-@app.get("/init-db")
-def init_db():
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS messages (
-        id SERIAL PRIMARY KEY,
-        sender VARCHAR(1) NOT NULL,
-        text TEXT NOT NULL,
-        timestamp TIMESTAMP NOT NULL
-    );
-    """)
-    conn.commit()
-    cur.close()
-    conn.close()
-    return {"status": "table created"}
     
 @app.post("/messages")
 def add_message(msg: Message):
@@ -58,5 +41,6 @@ def get_messages():
         {"sender": r[0], "text": r[1], "timestamp": r[2]}
         for r in rows
     ]
+
 
 
