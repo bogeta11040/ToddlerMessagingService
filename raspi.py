@@ -86,7 +86,7 @@ def keyboard_input():
         # kada korisnik krene da kuca
         is_typing = True
 
-        if ch == "\n":  # ENTER
+        if ch == "\r":  # ENTER
             if typing_buffer.strip():
                 send_message(typing_buffer)
                 show_on_lcd(typing_buffer)
@@ -113,4 +113,5 @@ thread_fetcher.start()
 # Glavna petlja ne radi nista
 while True:
     time.sleep(1)
+
 
